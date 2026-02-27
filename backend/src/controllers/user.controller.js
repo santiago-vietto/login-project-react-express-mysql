@@ -1,51 +1,59 @@
 const {getAllUsersService, getUserByIdService, updateUserService, deleteUserService} = require("../services/user.service")
+const { allUsersDto, userDto, updateUserDto } = require("../dtos/user.dto");
 
-const getAllUsersController = async (_, response) => {
-    const allUsers = await getAllUsersService()
 
-    if(allUsers.allUsers){
-        return response.status(allUsers.statusCode).json(allUsers.allUsers);
+const getAllUsersController = async (request, response) => {
+    const result = await getAllUsersService()
+
+    if(result.allUsers){
+        const allUsers = allUsersDto(result.allUsers);
+        return response.status(result.statusCode).json(allUsers);
     }
 
-    return response.status(allUsers.statusCode).json({message: allUsers.message});
+    return response.status(result.statusCode).json({message: result.message});
 }
+
 
 const getUserByIdController = async (request, response) => {
 
     const {id} = request.params;
 
-    const user = await getUserByIdService(id);
+    const result = await getUserByIdService(id);
 
-    if(user.user){
-        return response.status(user.statusCode).json(user.user);
+    if(result.user){
+        const user = userDto(result.user);
+        return response.status(result.statusCode).json(user);
     }
 
-    return response.status(user.statusCode).json({message: user.message});
+    return response.status(result.statusCode).json({message: result.message});
 }
+
 
 const getMyUserController = async (request, response) => {
 
     const myUser = request.user.id;
 
-    const data = await getUserByIdService(myUser);
+    const result = await getUserByIdService(myUser);
 
-    if(data.user){
-       return response.status(data.statusCode).json(data.user);
+    if(result.user){
+        const user = userDto(result.user);
+        return response.status(result.statusCode).json(user);
     }
 
-    return response.status(data.statusCode).json({message: data.message});
+    return response.status(result.statusCode).json({message: result.message});
 }
 
 
 const updateUserController = async (request, response) => {
     
     const {id} = request.params;
-    const userToUpdate = request.body;
+    const userToUpdate = updateUserDto(request.body);
 
     const message = await updateUserService(id, userToUpdate);
 
     response.status(message.statusCode).json({message: message.message });
 }
+
 
 const deleteUserController = async (request, response) => {
 

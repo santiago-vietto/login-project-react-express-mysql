@@ -9,8 +9,7 @@ const Homepage = () => {
   const navigate = useNavigate();
   const { user, loading, error, logout } = useContext(AuthContext);
 
-  const { username, email, team, isAdmin, createdAt } = user || {};
-  const role = isAdmin ? "admin" : "usuario";
+  const { username, email, teamName, isAdmin, role } = user || {};
 
   if (loading) return <div className="home-container">Cargando...</div>;
 
@@ -23,8 +22,6 @@ const Homepage = () => {
       {user ? (
         <>
           <h3>Datos personales</h3>
-
-          <p>Tipo de usuario: <b>{role}</b></p>
 
           <div className="user-card">
 
@@ -41,12 +38,9 @@ const Homepage = () => {
             </div>
 
             <div className="user-field">
-              <label>Team: {team?.name || "Sin team"}</label>
+              <label>Team: {teamName}</label>
             </div>
 
-            <div className="user-field">
-              <label>Fecha de creación: {createdAt}</label>
-            </div>
           </div>
 
           {isAdmin && (
@@ -60,7 +54,7 @@ const Homepage = () => {
                   {users.map((u) => (
                     <div key={u.id} className="user-row">
                       <span>
-                        {u.username} — {u.email} — {u.team?.name || "Sin team"}
+                        {u.username} — {u.email} — {u.teamName}
                       </span>
 
                       <button

@@ -50,7 +50,7 @@ const Registerform = () => {
           <label className="label">Email</label>
           <input
             className="input"
-            type="email"
+            type="text"
             value={values.email}
             onChange={(e) =>
               setValues({ ...values, email: e.target.value })

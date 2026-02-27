@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const { prisma } = require("../db/config");
+const { getUserByUsernameOrEmailDao, createUserDao, getUserByUsernameDao } = require("../daos/user.dao")
+const { userDto } = require("../dtos/user.dto");
+
 
 const JWT = process.env.JWT;
 
@@ -9,15 +11,7 @@ const JWT = process.env.JWT;
 const registerService = async ({ username, email, password }) => {
 
     try{
-        const q = await prisma.user.findMany({
-            where: {
-                OR: [{ username }, { email }],
-            },
-            select: { 
-                username: true, 
-                email: true 
-            },
-        });
+        const q = await getUserByUsernameOrEmailDao(username, email);
 
         const usernameExists = q.some((u) => u.username === username);
         if (usernameExists) {
@@ -32,12 +26,10 @@ const registerService = async ({ username, email, password }) => {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(password, salt);
 
-        await prisma.user.create({
-            data: {
+        await createUserDao({
             username,
             email,
             password: hashedPassword,
-            },
         });
 
         return { message: "User has been created !", statusCode: 200 };
@@ -45,16 +37,12 @@ const registerService = async ({ username, email, password }) => {
     }catch(error){
         return { message: error, statusCode: 500 };
     }
-
 };
 
 const loginService = async ({ username, password }) => {
 
     try{
-        const user = await prisma.user.findUnique({
-            where: { username },
-            include: { team: true, }
-        });
+        const user = await getUserByUsernameDao(username);
 
         if (!user) {
             return { message: "User not found !", statusCode: 404 };
@@ -68,13 +56,11 @@ const loginService = async ({ username, password }) => {
         const token = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, JWT, { expiresIn: "1d" });
         const { password: _pw, ...others } = user;
 
-        
         return { token, message: "Login successfully !", user: others, statusCode: 200 };
 
     }catch(error){
         return { message: error, statusCode: 500 };
     }
-    
 };
 
 

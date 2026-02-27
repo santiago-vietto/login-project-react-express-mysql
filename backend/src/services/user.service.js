@@ -1,30 +1,19 @@
-const { prisma } = require("../db/config")
+const { getAllUsersDao, getUserByIdDao, updateUserDao, deleteUserDao } = require("../daos/user.dao")
 
 const getAllUsersService = async () => {
-    const allUsers = await prisma.user.findMany({
-        include: {
-            team: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
-        },
-    });
 
-    if(allUsers.length === 0){
-        return {message: "Users not found", statusCode: 404}
+    const allUsers = await getAllUsersDao();
+
+    if (allUsers.length === 0) {
+        return { message: "Users not found", statusCode: 404 };
     }
 
-    return { allUsers, statusCode:200 };
+    return { allUsers, statusCode: 200 };
 }
 
 const getUserByIdService = async (id) => {
 
-    const user = await prisma.user.findUnique({
-        where: { id: Number(id) },
-        include: { team: true, }
-    });
+    const user = await getUserByIdDao(Number(id));
 
     if(!user){
         return {message: "User not found", statusCode: 404}
@@ -35,18 +24,13 @@ const getUserByIdService = async (id) => {
 
 const updateUserService = async (id, userToUpdate) => {
     try {
-        const userById = await prisma.user.findUnique({
-            where: { id: Number(id) },
-        });
+        const userById = await getUserByIdDao(Number(id));
 
         if (!userById) {
             return { message: "User not found", statusCode: 404 };
         }
 
-        await prisma.user.update({
-            where: { id: Number(id) },
-            data: userToUpdate,
-        });
+        await updateUserDao(Number(id), userToUpdate);
 
         return { message: "User updated successfully", statusCode: 201 };
     } catch (error) {
@@ -56,17 +40,13 @@ const updateUserService = async (id, userToUpdate) => {
 
 const deleteUserService = async (id) => {
     try {
-        const user = await prisma.user.findUnique({
-            where: { id: Number(id) },
-        });
+        const user = await getUserByIdDao(Number(id));
 
         if (!user) {
             return { message: "User not found", statusCode: 404 };
         }
 
-        await prisma.user.delete({
-            where: { id: Number(id) },
-        });
+        await deleteUserDao(Number(id));
 
         return { message: "User deleted successfully", statusCode: 201 };
     } catch (error) {

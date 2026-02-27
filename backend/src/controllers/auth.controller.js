@@ -1,9 +1,9 @@
 const { registerService, loginService } = require("../services/auth.service");
-
+const { userDto, registerUserDto, loginUserDto } = require("../dtos/user.dto");
 
 const registerController = async (request, response) => {
 
-    const newUser = request.body;
+    const newUser = registerUserDto(request.body);
 
     const message = await registerService(newUser);
 
@@ -13,13 +13,15 @@ const registerController = async (request, response) => {
 
 const loginController = async (request, response) => {
 
-    const credentials = request.body;
+    const credentials = loginUserDto(request.body);
 
     const result = await loginService(credentials);
 
     if (result?.token) {
+        const user = userDto(result.user);
+
         response.cookie("accessToken", result.token, { httpOnly: true });
-        return response.status(result.statusCode).json({message: result.message, user: result.user})
+        return response.status(result.statusCode).json({message: result.message, user})
     } else{
         return response.status(result.statusCode).json({message: result.message });
     }
