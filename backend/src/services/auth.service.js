@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { getUserByUsernameOrEmailDao, createUserDao, getUserByUsernameDao } = require("../daos/user.dao")
-const { userDto } = require("../dtos/user.dto");
 
 
 const JWT = process.env.JWT;

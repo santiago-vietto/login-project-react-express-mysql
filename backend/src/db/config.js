@@ -23,9 +23,10 @@ const prisma = new PrismaClient({ adapter });
 const connectDB = async () => {
   try{
     await prisma.$connect();
+    await prisma.$queryRaw`SELECT 1`; 
     console.log("Conectado a la DB MySQL via Prisma !");
   }catch(error){
-    console.error(`Error de conexión con la DB MySQL: ${error.message}`);
+    console.error("Error de conexión con la DB MySQL: ", error);
     process.exit(1);
   }
 };
