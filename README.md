@@ -9,8 +9,8 @@ Proyecto web full stack con autenticación.
 ### Tecnologías iplementadas
 
 - **Database:** MySQL  
-- **Backend:** Node.js, Express, Prisma  
-- **Frontend:** React  
+- **Backend:** Node.js, Javascript, Express, Prisma  
+- **Frontend:** React, Vite
 
 ---
 
