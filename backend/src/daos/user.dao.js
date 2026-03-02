@@ -31,10 +31,6 @@ const getUserByUsernameOrEmailDao = async (username, email) => {
         where: {
             OR: [{ username }, { email }],
         },
-        select: { 
-            username: true, 
-            email: true 
-        },
     });
 };
 
