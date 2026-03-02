@@ -2,14 +2,7 @@ const { prisma } = require("../db/config")
 
 const getAllUsersDao = async () => {
     return await prisma.user.findMany({
-        include: {
-            team: {
-                select: {
-                    id: true,
-                    name: true,
-                },
-            },
-        },
+        include: { team: true }
     });
 }
 
