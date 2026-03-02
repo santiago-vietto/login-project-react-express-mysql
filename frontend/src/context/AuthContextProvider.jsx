@@ -13,10 +13,10 @@ const AuthContextProvider = ({ children }) => {
     dispatch({ type: AUTH_TYPES.AUTH_START });
 
     try {
-      const res = await api.post("/api/auth/register", data);
+      await api.post("/api/auth/register", data);
 
+      dispatch({ type: AUTH_TYPES.AUTH_FAILURE, payload: null });
       return { ok: true };
-
     } catch (err) {
       const errorMessage = err?.response?.data?.message || err?.response?.data;
       dispatch({ type: AUTH_TYPES.AUTH_FAILURE, payload: errorMessage });
